@@ -34,14 +34,15 @@ def route_factory(endpoint: str, name: str, method: str, body: str):
     def route_func(**kwargs):
         content = {}
         try:
+            fakers = re.findall("{{faker '.*?'}}", body)
             content = json.loads(body)
-        except json.decoder.JSONDecodeError:
+        except Exception:
             pass
 
         return jsonify(content), 200
 
     route_func.__name__ = name
-    app.add_url_rule(endpoint, name, route_func, options={'methods': [method]})
+    app.add_url_rule(endpoint, name, route_func, methods=[method])
 
     return route_func
 
