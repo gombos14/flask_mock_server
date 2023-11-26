@@ -5,21 +5,22 @@ const host = 'localhost';
 const port = 5050;
 
 const requestListener = function (req, res) {
+    let fake_value = '';
+    const special_separator = '*';  // use this to split query param, eq. q=number*int -> number.int
+
     let url = req.url;
     url = url.split('=')
 
-    if (url[0] === '/q') {
+    if (url[0] === '/?q') {
         const query = url[1];
-        const fake_value = eval(`faker.${query}()`)
+        fake_value = eval(`faker.${query.replaceAll(special_separator, '.')}()`)
     }
 
-
     res.writeHead(200);
-    res.end("My first server!");
+    res.end(fake_value.toString());
 };
 
 const server = http.createServer(requestListener);
 server.listen(port, host, () => {
     console.log(`Server is running on http://${host}:${port}`);
-    console.log(faker.number.int())
 });
